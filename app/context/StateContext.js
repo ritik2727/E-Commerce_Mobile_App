@@ -1,0 +1,159 @@
+import React, { useState, useEffect, createContext } from 'react'
+import { auth , database } from '../../Firebase';
+export const StateContext = createContext();
+
+export const StateProvider = (props) => {
+   const [user, setUser] = useState()
+   const [cartTotal, setCartTotal] = useState()
+   const [cartSave, setCartSave] = useState()
+   const [wishTotal, setWishTotal] = useState()
+   const [wishSave, setWishSave] = useState()
+   const [orderTotal, setOrderTotal] = useState()
+   const [orderSave, setOrderSave] = useState()
+   const [dataMens, setDataMens] = useState([])
+   const [dataWomens, setDataWomens] = useState([])
+   const [dataMobile, setDataMobile] = useState([])
+   const [dataCart, setDataCart] = useState([])
+   const [dataWishlist, setDataWishlist] = useState([])
+   const [add, setAdd] = useState([])
+   const [dataOrder, setDataOrder] = useState([])
+
+
+   useEffect(() => {
+      auth.onAuthStateChanged(usr => {
+         if (usr != null)
+            setUser(usr.uid)
+         else
+            setUser(null);
+      })
+
+      //Mens Data Fetching
+      const getMensDataFromFirebase = [];
+      database.collection('collection').doc("mens").collection("lists").onSnapshot((querySnapshot) => {
+         querySnapshot.forEach((doc) => {
+            getMensDataFromFirebase.push({ ...doc.data(), key: doc.id });
+         });
+         setDataMens(getMensDataFromFirebase);
+      });
+
+      //Womens Data Fetching
+      const getWomenDataFromFirebase = [];
+      database.collection('collection').doc("womens").collection("lists").onSnapshot((querySnapshot) => {
+         querySnapshot.forEach((doc) => {
+            getWomenDataFromFirebase.push({ ...doc.data(), key: doc.id });
+         });
+         setDataWomens(getWomenDataFromFirebase);
+      });
+
+      //Mobile Data Fetching
+      const getMobileDataFromFirebase = [];
+      database.collection('collection').doc("mobile").collection("lists").onSnapshot((querySnapshot) => {
+         querySnapshot.forEach((doc) => {
+            getMobileDataFromFirebase.push({ ...doc.data(), key: doc.id });
+         });
+         setDataMobile(getMobileDataFromFirebase);
+      });
+
+      //Cart Data Fetching
+      if (user !== null) {
+         database.collection('users').doc(user).collection('cart').onSnapshot((a) => {
+            const fdata = [];
+            a.forEach((item) => {
+               fdata.push({ ...item.data(), key: item.id })
+
+            })
+            setDataCart(fdata)
+         })
+
+         database.collection('users').doc(user).collection('order').onSnapshot((a) => {
+            const odata = [];
+            a.forEach((item) => {
+               odata.push({ ...item.data(), key: item.id })
+            })
+            setDataOrder(odata)
+         })
+
+         //Wishlist Data from Firebase
+         database.collection('users').doc(user).collection("wish").onSnapshot((querySnapshot) => {
+            const getWishDataFromFirebase = [];
+            querySnapshot.forEach((doc) => {
+               getWishDataFromFirebase.push({ ...doc.data(), key: doc.id });
+            });
+            setDataWishlist(getWishDataFromFirebase);
+         });
+
+         database.collection('users').doc(user).collection('cart').onSnapshot((a) => {
+            let total = 0;
+            let save = 0;
+            a.forEach((item) => {
+               total = total + Number(item.data().price)
+               save = save + Number(item.data().oldPrice - item.data().price)
+            })
+            setCartSave(save)
+            setCartTotal(total)
+         })
+
+         database.collection('users').doc(user).collection('order').onSnapshot((a) => {
+            let total = 0;
+            let save = 0;
+            a.forEach((item) => {
+               total = total + Number(item.data().price)
+               save = save + Number(item.data().oldPrice - item.data().price)
+            })
+            setOrderSave(save)
+            setOrderTotal(total)
+         })
+
+         database.collection('users').doc(user).collection('wish').onSnapshot((a) => {
+            let total = 0;
+            let save = 0;
+            a.forEach((item) => {
+               total = total + Number(item.data().price)
+               save = save + Number(item.data().oldPrice - item.data().price)
+            })
+            setWishSave(save)
+            setWishTotal(total)
+         })
+
+      //address
+
+
+      const getAddress = [];
+      database.collection('users').doc(user).collection('shipping').onSnapshot((querySnapshot) => {
+         querySnapshot.forEach((doc) => {
+            getAddress.push({ ...doc.data(), key: doc.id });
+         });
+         setAdd(getAddress);
+      });
+   }
+
+
+   }, [user])
+
+
+
+   return (
+      <StateContext.Provider
+         value={{
+
+            mens: [dataMens, setDataMens],
+            womens: [dataWomens, setDataWomens],
+            userdata: [user, setUser],
+            mobile: [dataMobile, setDataMobile],
+            cart: [dataCart, setDataCart],
+            wish: [dataWishlist, setDataWishlist],
+            cartSave: [cartSave, setCartSave],
+            cartTotal: [cartTotal, setCartTotal],
+            wishSave: [wishSave, setWishSave],
+            wishTotal: [wishTotal, setWishTotal],
+            addr:[add,setAdd],
+            oder: [dataOrder, setDataOrder],
+            oTotal: [orderTotal, setOrderTotal],
+            oSave: [orderSave, setOrderSave]
+         }
+         }
+      >
+         {props.children}
+      </StateContext.Provider >
+   )
+}
