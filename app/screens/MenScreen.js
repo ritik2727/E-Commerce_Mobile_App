@@ -72,16 +72,16 @@ function MenScreen({navigation}) {
    
 
     const [images,setImages] = useState([
-        "https://images.bewakoof.com/uploads/grid/app/DOTD-STATIC-BANNER-MEN-1640597660.jpg",
-        "https://images.bewakoof.com/uploads/grid/app/layered-hoodie-sweatshirt1X1-1640499961.gif",
-       "https://images.bewakoof.com/uploads/grid/app/offers-banner-men-bb21-1640377277.jpg",
+        "https://images.bewakoof.com/uploads/grid/app/DOTD-IS-BACK-homepage-banner-13thjan-M-revised-1642063825.jpg",
+        "https://images.bewakoof.com/uploads/grid/app/winter-men-oof-1641996162.jpg",
+       "https://images.bewakoof.com/uploads/grid/app/men-pyjama-joggers-oof-1641996155.jpg",
     ])
   return (
     <ScrollView style={{backgroundColor:Color.white}} showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
         <TouchableWithoutFeedback onPress={()=>navigation.navigate('MenLists')}>
         <Image 
             style={styles.banner1}
-            source={{ uri: 'https://images.bewakoof.com/uploads/grid/app/ByeBye21Sale-Static-men-1640368543.jpg' }} 
+            source={{ uri: 'https://images.bewakoof.com/uploads/grid/app/oof-sale-open-file-1x1-2022-revised-1641996160.jpg' }} 
         />
         </TouchableWithoutFeedback>
 
@@ -105,14 +105,18 @@ function MenScreen({navigation}) {
             <BannerCard   key={id} title={item.title} images={item.url} onPress={()=>navigation.navigate('MenLists')} />
         ))}
         </ScrollView>
+        <TouchableWithoutFeedback onPress={()=>navigation.navigate('MenLists')}>
         <Image 
             style={styles.banner4}
-            source={require('../assets/banner4.jpeg')} 
+            source={{ uri: 'https://images.bewakoof.com/uploads/grid/app/buy-3-men-oof-1641996155.jpg' }} 
         />
+        </TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={()=>navigation.navigate('MenLists')}>
         <Image 
         style={styles.banner4}
-        source={require('../assets/banner5.jpeg')} 
+        source={{ uri: 'https://images.bewakoof.com/uploads/grid/app/b2g1-mid-banner-oof-1641996154.jpg' }} 
          />
+         </TouchableWithoutFeedback>
         <AppText style={{textAlign:'center',fontWeight:'bold'}}>New Arrivals For MEN</AppText>
         <View   style={styles.containerC}> 
         {ProductList.map((item,index) => (

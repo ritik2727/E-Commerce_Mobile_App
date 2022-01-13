@@ -1,93 +1,23 @@
 import React, { useContext } from "react";
-import {
-  StyleSheet,
-  View,
-  Image,
-  FlatList,
-  Text,
-  TouchableOpacity,
-  SafeAreaView,
-} from "react-native";
+import { StyleSheet, View, Image, FlatList, SafeAreaView } from "react-native";
 import AppText from "../components/AppText";
 import { MaterialIcons } from "@expo/vector-icons";
 import Color from "../config/Color";
 import { Button } from "react-native-paper";
 import CartCard from "../components/CartCard";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { StateContext } from "../context/StateContext";
-import { doc, deleteDoc } from "firebase/firestore";
-import { database } from "../../Firebase";
 import ContextLink from "../components/ContextLink";
-
-const dataList = [
-  {
-    url: "https://images.bewakoof.com/t320/mickey-mouse-polaroids-440234-1637922200-1.jpg",
-    title: "Atlantic Deep Full Sleeve Henley T-shirt",
-    price: "₹499",
-    save: "₹499",
-    size: "M",
-  },
-  {
-    url: "https://images.bewakoof.com/t320/black-grey-mel-cut-n-sew-hoodie-sweatshirt-392785-1638435660-1.jpg",
-    title: "Atlantic Deep Full Sleeve Henley T-shirt",
-    price: "₹499",
-    save: "₹499",
-    size: "M",
-  },
-  {
-    url: "https://images.bewakoof.com/t320/black-grey-mel-cut-n-sew-hoodie-sweatshirt-392785-1638435660-1.jpg",
-    title: "Atlantic Deep Full Sleeve Henley T-shirt",
-    price: "₹499",
-    save: "₹499",
-    size: "M",
-  },
-  {
-    url: "https://images.bewakoof.com/t320/black-grey-mel-cut-n-sew-hoodie-sweatshirt-392785-1638435660-1.jpg",
-    title: "Atlantic Deep Full Sleeve Henley T-shirt",
-    price: "₹499",
-    save: "₹499",
-    size: "M",
-  },
-  {
-    url: "https://images.bewakoof.com/t320/black-grey-mel-cut-n-sew-hoodie-sweatshirt-392785-1638435660-1.jpg",
-    title: "Atlantic Deep Full Sleeve Henley T-shirt",
-    price: "₹499",
-    save: "₹499",
-    size: "M",
-  },
-  {
-    url: "https://images.bewakoof.com/t320/black-grey-mel-cut-n-sew-hoodie-sweatshirt-392785-1638435660-1.jpg",
-    title: "Atlantic Deep Full Sleeve Henley T-shirt",
-    price: "₹499",
-    save: "₹499",
-    size: "M",
-  },
-  {
-    url: "https://images.bewakoof.com/t320/black-grey-mel-cut-n-sew-hoodie-sweatshirt-392785-1638435660-1.jpg",
-    title: "Atlantic Deep Full Sleeve Henley T-shirt",
-    price: "₹499",
-    save: "₹499",
-    size: "M",
-  },
-];
 
 function CartScreen({ navigation }) {
   const { cart, carttotal, userdata, oldPTotal, cartsave, addr } =
     useContext(StateContext);
-  const [dataCart, setDataCart] = cart;
-  const [cartSave, setCartSave] = cartsave;
-  const [cartTotal, setCartTotal] = carttotal;
-  const [oldPriceCartTotal, setOldPriceCartTotal] = oldPTotal;
-  const [user, setUser] = userdata;
+  const [dataCart] = cart;
+  const [cartSave] = cartsave;
+  const [cartTotal] = carttotal;
+  const [oldPriceCartTotal] = oldPTotal;
+  const [user] = userdata;
   const [add] = addr;
   const ide = user;
-  const deleteHandler = async (id) => {
-    const docRef = doc(database, "users", `${ide}`, "cart", id);
-    await deleteDoc(docRef);
-    then(() => {
-      ToastAndroid.show("Item Removed From Cart", ToastAndroid.SHORT);
-    });
-  };
 
   if (dataCart.length === 0) {
     return (
@@ -113,7 +43,7 @@ function CartScreen({ navigation }) {
               Continue Shopping
             </AppText>
           </Button>
-          <ContextLink  navigation={navigation}/>
+          <ContextLink navigation={navigation} />
         </SafeAreaView>
       </View>
     );
@@ -210,7 +140,7 @@ function CartScreen({ navigation }) {
             oldPrice={item.oldPrice}
             // save={item.save}
             nu={item.nu}
-            onPress={()=> navigation.navigate('ListingDetails',item)}
+            onPress={() => navigation.navigate("ListingDetails", item)}
             image={item.image}
           />
         )}
@@ -242,7 +172,7 @@ function CartScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   imgBackground: {
-    backgroundColor:Color.white,
+    backgroundColor: Color.white,
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "center",

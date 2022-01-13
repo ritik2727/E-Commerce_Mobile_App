@@ -1,10 +1,10 @@
-import React, { useContext } from "react";
-import { StyleSheet, Image, ToastAndroid } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, ToastAndroid, Alert } from "react-native";
 import Screen from "../components/Screen";
 import { AppForm, AppFormField, SubmitButton } from "../components/forms";
 import * as Yup from "yup";
-import { ErrorMessage } from "../components/forms";
-import { authentication, database } from "../../Firebase";
+import { authentication } from "../../Firebase";
+import { TextInput } from "react-native-paper";
 
 import { signInWithEmailAndPassword } from "firebase/auth";
 import Color from "../config/Color";
@@ -15,6 +15,15 @@ const validationSchema = Yup.object().shape({
 });
 
 function LoginScreen({ navigation }) {
+  const [icon, setIcon] = useState("eye-off");
+  const [hidePassword, setHidePassword] = useState(true);
+
+  const changeIcon = () => {
+    icon !== "eye"
+      ? (setIcon("eye"), setHidePassword(false))
+      : (setIcon("eye-off"), setHidePassword(true));
+  };
+
   const handleSubmit = ({ email, password }) => {
     signInWithEmailAndPassword(authentication, email, password)
       .then((userCredential) => {
@@ -24,7 +33,7 @@ function LoginScreen({ navigation }) {
         // ...
       })
       .catch((error) => {
-        ToastAndroid.show(error.message, ToastAndroid.SHORT);
+        Alert.alert(error.message);
       });
   };
 
@@ -51,7 +60,14 @@ function LoginScreen({ navigation }) {
           autoCorrect={false}
           icon="lock"
           name="password"
-          secureTextEntry
+          secureTextEntry={hidePassword}
+          right={
+            <TextInput.Icon
+              color={Color.medium}
+              name={icon}
+              onPress={() => changeIcon()}
+            />
+          }
           placeholder="Password"
           textContextType="password"
         />

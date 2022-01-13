@@ -1,11 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   View,
   Image,
   ScrollView,
   TouchableWithoutFeedback,
-  FlatList,
 } from "react-native";
 import { SliderBox } from "react-native-image-slider-box";
 import Color from "../config/Color";
@@ -65,21 +64,20 @@ const ProductList = [
 
 function AccessoriesScreen({ navigation }) {
   const [images, setImages] = useState([
-    "https://images.bewakoof.com/uploads/grid/app/ByeBye21Sale-Static-common-1640368542.jpg",
+    "https://images.bewakoof.com/uploads/grid/app/oof-sale-open-file-1x1-live-now-1641917134.jpg",
     "https://images.bewakoof.com/uploads/grid/app/1-x-1-banner-mobile-cover-1638935683.jpg",
     "https://images.bewakoof.com/uploads/grid/app/1-x-1-banner-headphone-1638959400.jpg",
     "https://images.bewakoof.com/uploads/grid/app/1-x-1-banner-TOD-boat-1639732401.jpg",
   ]);
   return (
     <ScrollView
-    style={{ backgroundColor: Color.white }}
+      style={{ backgroundColor: Color.white }}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ flexGrow: 1 }}
     >
       <SliderBox
         images={images}
-        onCurrentImagePressed={() => navigation.navigate("AccessoriesLists")
-        }
+        onCurrentImagePressed={() => navigation.navigate("AccessoriesLists")}
         sliderBoxHeight={400}
         dotColor="#FFEE58"
         inactiveDotColor="#90A4AE"
@@ -92,40 +90,45 @@ function AccessoriesScreen({ navigation }) {
         style={styles.containerS}
       >
         {bannerList.map((item, id) => (
-          <BannerCard key={id} title={item.title} images={item.url} onPress={() => navigation.navigate("AccessoriesLists")} />
+          <BannerCard
+            key={id}
+            title={item.title}
+            images={item.url}
+            onPress={() => navigation.navigate("AccessoriesLists")}
+          />
         ))}
       </ScrollView>
-      <Image
-        style={styles.banner4}
-        source={require("../assets/banner4.jpeg")}
-      />
-      <Image
-        style={styles.banner4}
-        source={require("../assets/banner5.jpeg")}
-      />
-      {/* <View >
-            <FlatList style={{padding:10}}
-                data={ProductList}
-                numColumns={3} 
-                keyExtractor={(item, index) => `key-${index}` }
-                ListHeaderComponent={() => (
-                    <AppText style={{textAlign:'center',fontWeight:'bold'}}>New Arrivals For MEN</AppText>
-                  )}
-                renderItem={({item,index}) => (
-                    <ProductCard 
-                    key={index}
-                    title={item.title}
-                    images={item.url}
-                    />
-                )}
-            />
-        </View> */}
+      <TouchableWithoutFeedback
+        onPress={() => navigation.navigate("AccessoriesLists")}
+      >
+        <Image
+          style={styles.banner4}
+          source={{
+            uri: "https://images.bewakoof.com/uploads/grid/app/qrioh-design-mid-banner-1641879893.jpg",
+          }}
+        />
+      </TouchableWithoutFeedback>
+      <TouchableWithoutFeedback
+        onPress={() => navigation.navigate("AccessoriesLists")}
+      >
+        <Image
+          style={styles.banner4}
+          source={{
+            uri: "https://images.bewakoof.com/uploads/grid/app/mid-banner-noise-1641879892.jpg",
+          }}
+        />
+      </TouchableWithoutFeedback>
       <AppText style={{ textAlign: "center", fontWeight: "bold" }}>
-        New Arrivals For MEN
+        TRENDING
       </AppText>
       <View style={styles.containerC}>
         {ProductList.map((item, index) => (
-          <ProductCard key={index} title={item.title} images={item.url} onPress={() => navigation.navigate("AccessoriesLists")}/>
+          <ProductCard
+            key={index}
+            title={item.title}
+            images={item.url}
+            onPress={() => navigation.navigate("AccessoriesLists")}
+          />
         ))}
       </View>
       <Button

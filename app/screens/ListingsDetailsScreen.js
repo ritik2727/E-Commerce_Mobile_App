@@ -2,10 +2,6 @@ import React, { useState, useContext } from "react";
 import {
   StyleSheet,
   View,
-  Platform,
-  StatusBar,
-  KeyboardAvoidingView,
-  FlatList,
   ScrollView,
   ToastAndroid,
 } from "react-native";
@@ -18,7 +14,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import SelectItem from "../components/SelectItem";
 import { StateContext } from "../context/StateContext";
 import { database } from "../../Firebase";
-import { doc, deleteDoc } from "firebase/firestore";
+import { doc} from "firebase/firestore";
 import { setDoc, collection } from "firebase/firestore";
 
 const arr = [
@@ -33,9 +29,9 @@ const arr = [
 function ListingsDetailsScreen({ route, navigation }) {
   const [selectedItem, setSelectedItem] = useState(arr[0].name);
   const { userdata, wish, cart } = useContext(StateContext);
-  const [user, setUser] = userdata;
-  const [dataCart, setDataCart] = cart;
-  const [dataWishlist, setDataWishlist] = wish;
+  const [user] = userdata;
+  const [dataCart] = cart;
+  const [dataWishlist] = wish;
   const ide = user;
 
   const listing = route.params;
@@ -52,7 +48,7 @@ function ListingsDetailsScreen({ route, navigation }) {
         image: listing.image,
         nu:listing.nu,
       }).then(() => {
-        ToastAndroid.show("Item Moved to WishList", ToastAndroid.SHORT);
+        ToastAndroid.show("Item Add to WishList", ToastAndroid.SHORT);
       });
     } else {
       ToastAndroid.show("Already In WishList", ToastAndroid.SHORT);
@@ -72,7 +68,7 @@ function ListingsDetailsScreen({ route, navigation }) {
         size: selectedItem,
         oldPrice: listing.oldPrice,
       }).then(() => {
-        ToastAndroid.show("Item Moved to Cart", ToastAndroid.SHORT);
+        ToastAndroid.show("Item Add to Cart", ToastAndroid.SHORT);
       });
     } else {
       ToastAndroid.show("Already In Cart", ToastAndroid.SHORT);
@@ -81,22 +77,7 @@ function ListingsDetailsScreen({ route, navigation }) {
 
   var per = ((listing.oldPrice - listing.price) * 100) / listing.oldPrice;
   per = per.toFixed(0);
-  // const addToWishlist = () => {
-  //     let q = dataWishlist.filter(a => a.productName === li)
-  //     if (q.length === 0) {
-  //        database.collection('users').doc(user).collection('wish').add({
-  //           price: price,
-  //           oldPrice:oldPrice,
-  //           percentageOff:per,
-  //           productName:productName,
-  //           image:image
-  //        })
-  //     }
-  //     else {
-  //        ToastAndroid.show("Already In WishList", ToastAndroid.SHORT)
-  //     }
 
-  //  }
   return (
     <Screen style={styles.screen}>
       <ScrollView

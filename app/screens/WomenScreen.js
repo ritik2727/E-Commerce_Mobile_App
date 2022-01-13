@@ -5,7 +5,6 @@ import {
   Image,
   ScrollView,
   TouchableWithoutFeedback,
-  FlatList,
 } from "react-native";
 import { SliderBox } from "react-native-image-slider-box";
 import Color from "../config/Color";
@@ -77,9 +76,9 @@ const ProductList = [
 
 function WomenScreen({ navigation }) {
   const [images, setImages] = useState([
-    "https://images.bewakoof.com/uploads/grid/app/offers-banner-women-bb21-1640377278.jpg",
-    "https://images.bewakoof.com/uploads/grid/app/Static-Banner-1-1-Full-Sleeves-Women-1640275561.jpg",
-    "https://images.bewakoof.com/uploads/grid/app/flare-sleeve-static-banner-1640499961.gif",
+    "https://images.bewakoof.com/uploads/grid/app/DOTD-IS-BACK-homepage-banner-13thjan-W-1642063826.jpg",
+    "https://images.bewakoof.com/uploads/grid/app/joggers-oof-sale-1641997077.jpg",
+    "https://images.bewakoof.com/uploads/grid/app/1st-time-discount-sweater-hoodie-1641997075.jpg",
   ]);
   return (
     <ScrollView
@@ -93,7 +92,7 @@ function WomenScreen({ navigation }) {
         <Image
           style={styles.banner1}
           source={{
-            uri: "https://images.bewakoof.com/uploads/grid/app/ByeBye21Sale-Static-women-1640368543.jpg",
+            uri: "https://images.bewakoof.com/uploads/grid/app/oof-sale-open-file-1x1-2022-revised-1641993826.jpg",
           }}
         />
       </TouchableWithoutFeedback>
@@ -125,16 +124,28 @@ function WomenScreen({ navigation }) {
           />
         ))}
       </ScrollView>
+      <TouchableWithoutFeedback
+        onPress={() => navigation.navigate("WomenLists")}
+      >
       <Image
         style={styles.banner4}
-        source={require("../assets/banner4.jpeg")}
+        source={{
+          uri: "https://images.bewakoof.com/uploads/grid/app/buy-3-mid-banner-oof-1641997075.jpg",
+        }}
       />
+      </TouchableWithoutFeedback>
+      <TouchableWithoutFeedback
+        onPress={() => navigation.navigate("WomenLists")}
+      >
       <Image
         style={styles.banner4}
-        source={require("../assets/banner5.jpeg")}
+        source={{
+          uri: "https://images.bewakoof.com/uploads/grid/app/b2g1-mid-banner-oof-1641997075.jpg",
+        }}
       />
+      </TouchableWithoutFeedback>
       <AppText style={{ textAlign: "center", fontWeight: "bold" }}>
-        New Arrivals For MEN
+        New Arrivals For WOMEN
       </AppText>
       <View style={styles.containerC}>
         {ProductList.map((item, index) => (

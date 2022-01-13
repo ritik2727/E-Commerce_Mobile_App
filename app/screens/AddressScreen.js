@@ -1,18 +1,12 @@
-import React , {useContext} from "react";
+import React, { useContext } from "react";
 import { StyleSheet, View } from "react-native";
 import AppText from "../components/AppText";
-import Screen from "../components/Screen";
-import {
-  AppForm,
-  AppFormField,
-  SubmitButton,
-  ErrorMessage,
-} from "../components/forms";
+import { AppForm, AppFormField, SubmitButton } from "../components/forms";
 import * as Yup from "yup";
 import { ScrollView } from "react-native";
 import { StateContext } from "../context/StateContext";
 import { database } from "../../Firebase";
-import { doc, deleteDoc } from "firebase/firestore";
+import { doc } from "firebase/firestore";
 import { setDoc, collection } from "firebase/firestore";
 import Color from "../config/Color";
 
@@ -44,7 +38,15 @@ function AddressScreen({ navigation }) {
   const ide = user;
 
   // on submit data
-  const submit = async ({ name, phone, email, pinCode, city, state, address }) => {
+  const submit = async ({
+    name,
+    phone,
+    email,
+    pinCode,
+    city,
+    state,
+    address,
+  }) => {
     const docRef = doc(collection(database, "users", `${ide}`, "shipping"));
     await setDoc(docRef, {
       name,
@@ -55,9 +57,9 @@ function AddressScreen({ navigation }) {
       state,
       address,
       cartTotal,
-    }).then(()=>{
-       navigation.navigate('Checkout')
-    })
+    }).then(() => {
+      navigation.navigate("Checkout");
+    });
   };
 
   return (
@@ -136,7 +138,7 @@ function AddressScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor:Color.white,
+    backgroundColor: Color.white,
     paddingHorizontal: 20,
     marginVertical: 5,
   },

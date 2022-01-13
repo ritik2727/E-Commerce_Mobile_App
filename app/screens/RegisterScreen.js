@@ -1,25 +1,13 @@
-import React from "react";
-import {
-  StyleSheet,
-  View,
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  StatusBar,
-  ScrollView,
-} from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, Alert, ScrollView,ToastAndroid } from "react-native";
 import Screen from "../components/Screen";
-import {
-  AppForm,
-  AppFormField,
-  SubmitButton,
-  ErrorMessage,
-} from "../components/forms";
+import { AppForm, AppFormField, SubmitButton } from "../components/forms";
 import * as Yup from "yup";
 import { authentication, database } from "../../Firebase";
-import { createUserWithEmailAndPassword,updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import Color from "../config/Color";
+import { TextInput } from "react-native-paper";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required().label("Name"),
@@ -29,6 +17,22 @@ const validationSchema = Yup.object().shape({
 });
 
 function RegisterScreen({ navigation }) {
+  const [icon, setIcon] = useState("eye-off");
+  const [iconConf, setConfIcon] = useState("eye-off");
+  const [hidePassword, setHidePassword] = useState(true);
+  const [hideConfPassword, setConfHidePassword] = useState(true);
+
+  const changeIcon = () => {
+    icon !== "eye"
+      ? (setIcon("eye"), setHidePassword(false))
+      : (setIcon("eye-off"), setHidePassword(true));
+  };
+
+  const changeConfIcon = () => {
+    iconConf !== "eye"
+      ? (setConfIcon("eye"), setConfHidePassword(false))
+      : (setConfIcon("eye-off"), setConfHidePassword(true));
+  };
   const handleSubmit = ({ email, password, name, confirmPassword }) => {
     if (password === confirmPassword) {
       createUserWithEmailAndPassword(authentication, email, password)
@@ -37,11 +41,11 @@ function RegisterScreen({ navigation }) {
           // Signed in
           await setDoc(doc(database, "users", authentication.currentUser.uid), {
             displayName: name,
-            email
+            email,
           });
           await updateProfile(result.user, {
-            displayName:name
-          })
+            displayName: name,
+          });
           // result.user.updateProfile({ displayName: name });
           ToastAndroid.show("Logged In", ToastAndroid.SHORT);
           // ...
@@ -88,7 +92,14 @@ function RegisterScreen({ navigation }) {
           <AppFormField
             autoCapitalize="none"
             name="password"
-            secureTextEntry
+            secureTextEntry={hideConfPassword}
+            right={
+              <TextInput.Icon
+                color={Color.medium}
+                name={iconConf}
+                onPress={() => changeConfIcon()}
+              />
+            }
             icon="lock"
             placeholder="Password"
             textContextType="password"
@@ -96,7 +107,14 @@ function RegisterScreen({ navigation }) {
           <AppFormField
             autoCapitalize="none"
             name="confirmPassword"
-            secureTextEntry
+            secureTextEntry={hidePassword}
+            right={
+              <TextInput.Icon
+                color={Color.medium}
+                name={icon}
+                onPress={() => changeIcon()}
+              />
+            }
             icon="lock"
             placeholder="Confirm Password"
             textContextType="password"

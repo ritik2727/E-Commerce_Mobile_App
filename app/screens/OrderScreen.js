@@ -2,9 +2,7 @@ import React, { useContext } from "react";
 import {
   View,
   StyleSheet,
-  Text,
   ScrollView,
-  TouchableOpacity,
   Image,
   SafeAreaView,
   TouchableWithoutFeedback,
@@ -14,26 +12,22 @@ import ContextLink from "../components/ContextLink";
 import Color from "../config/Color";
 import { Button } from "react-native-paper";
 
-import {
-  MaterialIcons,
-  AntDesign,
-  Ionicons,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
 import { StateContext } from "../context/StateContext";
 import AppText from "../components/AppText";
 
-const OrderScreen = ({navigation}) => {
+const OrderScreen = ({ navigation }) => {
   const { oder, addr } = useContext(StateContext);
   const [dataOrder] = oder;
   const [add] = addr;
- 
-  const sortedUsers= dataOrder.sort((a,b)=>b.date - a.date);
+
+  const sortedUsers = dataOrder.sort((a, b) => b.date - a.date);
   if (dataOrder.length === 0)
     return (
       <View style={styles.imgBackground}>
         <SafeAreaView style={styles.containerE}>
-          <AppText style={{fontSize:15,marginBottom:10,color:'#adadad'}}>Sadly, you haven't placed any orders till now.</AppText>
+          <AppText style={{ fontSize: 15, marginBottom: 10, color: "#adadad" }}>
+            Sadly, you haven't placed any orders till now.
+          </AppText>
           <Image
             source={require("./../assets/noorders.png")}
             style={styles.logo}
@@ -54,7 +48,7 @@ const OrderScreen = ({navigation}) => {
               Continue Shopping
             </AppText>
           </Button>
-          <ContextLink navigation={navigation}/>
+          <ContextLink navigation={navigation} />
         </SafeAreaView>
       </View>
     );
@@ -67,11 +61,15 @@ const OrderScreen = ({navigation}) => {
               <View style={styles.container}>
                 <View style={styles.containerA}>
                   <View style={{ width: "25%" }}>
-                    <TouchableWithoutFeedback  onPress={()=> navigation.navigate('ListingDetails',item)} >
-                    <Image
-                      style={{ width: 100, height: 100 }}
-                      source={{ uri: item.image }}
-                    />
+                    <TouchableWithoutFeedback
+                      onPress={() =>
+                        navigation.navigate("ListingDetails", item)
+                      }
+                    >
+                      <Image
+                        style={{ width: 100, height: 100 }}
+                        source={{ uri: item.image }}
+                      />
                     </TouchableWithoutFeedback>
                   </View>
                   <View style={{ width: "70%" }}>
