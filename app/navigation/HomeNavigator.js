@@ -40,6 +40,7 @@ function HomeNavigator(props) {
             tabBarIndicatorStyle:{
                 elevation: 10,
                 backgroundColor: '#FDD835',
+                height:5
             }
         }}
     >

@@ -28,7 +28,7 @@ function AppTextInput({icon,width='100%',...otherProps}) {
 
 const styles = StyleSheet.create({
     conatiner:{
-        backgroundColor:Color.light,
+        backgroundColor:Color.white,
         // padding: 1,
         marginVertical: 10,
     },

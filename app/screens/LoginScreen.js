@@ -1,44 +1,27 @@
-import React from "react";
+import React, { useContext } from "react";
 import { StyleSheet, Image, ToastAndroid } from "react-native";
 import Screen from "../components/Screen";
 import { AppForm, AppFormField, SubmitButton } from "../components/forms";
 import * as Yup from "yup";
 import { ErrorMessage } from "../components/forms";
-import {auth , database} from '../../Firebase'
+import { authentication, database } from "../../Firebase";
+
+import { signInWithEmailAndPassword } from "firebase/auth";
+import Color from "../config/Color";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().required().email().label("Email"),
   password: Yup.string().required().min(4).label("Password"),
 });
 
-function LoginScreen(props) {
-  const handleSubmit =  ({ email, password }) => {
-    // firebase.auth().signInWithEmailAndPassword(email, password)
-    //   .then((userCredential) => {
-    //     ToastAndroid.show("Logged In", ToastAndroid.SHORT);
-    //   })
-    //   .catch((error) => {
-    //     ToastAndroid.show(error.message, ToastAndroid.SHORT);
-    //   });
-    
-     auth.signInWithEmailAndPassword(email, password)
-      .then((response) => {
-        const uid = response.user.uid;
-        const usersRef = database.collection("users");
-        usersRef
-          .doc(uid)
-          .get()
-          .then((firestoreDocument) => {
-            if (!firestoreDocument.exists) {
-              alert("User does not exist anymore.");
-              return;
-            }
-            // const user = firestoreDocument.data();
-            ToastAndroid.show("Logged In", ToastAndroid.SHORT);
-          })
-          .catch((error) => {
-            ToastAndroid.show(error.message, ToastAndroid.SHORT);
-          });
+function LoginScreen({ navigation }) {
+  const handleSubmit = ({ email, password }) => {
+    signInWithEmailAndPassword(authentication, email, password)
+      .then((userCredential) => {
+        // Signed in
+        // const user = userCredential.user;
+        ToastAndroid.show("Logged In", ToastAndroid.SHORT);
+        // ...
       })
       .catch((error) => {
         ToastAndroid.show(error.message, ToastAndroid.SHORT);
@@ -47,7 +30,7 @@ function LoginScreen(props) {
 
   return (
     <Screen style={styles.container}>
-      <Image style={styles.logo} source={require("../assets/logo2.png")} />
+      {/* <Image style={styles.logo} source={require("../assets/logo2.png")} /> */}
 
       <AppForm
         initialValues={{ email: "", password: "" }}
@@ -81,6 +64,7 @@ function LoginScreen(props) {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
+    backgroundColor: Color.white,
   },
   logo: {
     width: 100,

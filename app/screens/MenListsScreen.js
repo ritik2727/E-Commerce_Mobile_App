@@ -75,11 +75,12 @@ function MenListsScreen({navigation}) {
             keyExtractor={(item, index) => `key-${index}` }
             renderItem={({item,index,}) => (
                 <ListCard 
-                key={index}
+                id={item.key}
                 price={item.price}
                 oldPrice={item.oldPrice}
-                title={item.productName}
-                images={item.image}
+                productName={item.productName}
+                image={item.image}
+                nu={item.nu}
                 onPress={()=> navigation.navigate('ListingDetails',item)}
                 />
             )}

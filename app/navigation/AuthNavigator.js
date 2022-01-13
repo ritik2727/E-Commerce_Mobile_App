@@ -14,7 +14,7 @@ function AuthNavigator(props) {
         screenOptions={{
             headerMode: 'screen',
             headerTintColor: 'black',
-            headerStyle: { backgroundColor: '#FFF000' },
+            headerStyle: { backgroundColor: 'white' },
             headerBlurEffect: "dark",
             animation: "flip",
             presentation: "fullScreenModal"

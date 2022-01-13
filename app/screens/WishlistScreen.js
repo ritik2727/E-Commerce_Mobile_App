@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, View ,Image,FlatList,Text,TouchableOpacity} from 'react-native';
+import React , {useContext} from 'react';
+import { StyleSheet, View ,Image,FlatList,Text,TouchableOpacity,SafeAreaView} from 'react-native';
 import AppText from '../components/AppText';
 import { MaterialIcons } from '@expo/vector-icons'; 
 import Color from '../config/Color';
@@ -7,6 +7,8 @@ import { Button } from 'react-native-paper';
 import CartCard from '../components/CartCard';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import WishListCard from '../components/WishListCard';
+import { StateContext } from '../context/StateContext';
+import ContextLink from '../components/ContextLink';
 
 const dataList = [
   {
@@ -62,6 +64,42 @@ const dataList = [
 
 
 function WishListScreen({navigation}) {
+  const { wish, wishtotal, userdata, cart } = useContext(StateContext);
+  const [dataWishlist, setDataWishlist] = wish;
+  const [dataCart, setDataCart] = cart;
+  const [wishTotal, setWishTotal] = wishtotal;
+  const [user, setUser] = userdata;
+  const ide = user;
+  
+  if (dataWishlist.length === 0){
+    return (
+      <View style={styles.imgBackground}>
+        <SafeAreaView style={styles.container}>
+          <Image
+            source={require("./../assets/wishlistempty.png")}
+            style={styles.logo}
+          />
+          <AppText>Your Wishlist is Empty !</AppText>
+          <Button
+            color={Color.secondary}
+            mode="outlined"
+            style={{
+              borderWidth: 1,
+              borderColor: Color.secondary,
+              marginTop: 10,
+            }}
+            onPress={() => navigation.navigate("Home")}
+            backgroundColor={Color.black}
+          >
+            <AppText style={{ color: Color.secondary, fontSize: 16 }}>
+              Continue Shopping
+            </AppText>
+          </Button>
+          <ContextLink navigation={navigation}/>
+        </SafeAreaView>
+      </View>
+    )
+  }
   return (
     <View style={{ flex: 1, backgroundColor:Color.light }}>
     <View style={{ flexDirection: 'row', backgroundColor: '#fff', marginBottom: 2 }}>
@@ -75,16 +113,19 @@ function WishListScreen({navigation}) {
     <View style={{width:'100%',paddingHorizontal:5,paddingBottom:55}}>
     <FlatList 
             showsVerticalScrollIndicator={false}
-            data={dataList}
+            data={dataWishlist}
             numColumns={2}
             keyExtractor={(item, index) => `key-${index}` }
             renderItem={({item,index}) => (
               <WishListCard 
                 size={item.size} 
-                title={item.title} 
+                id={item.key}
+                productName={item.productName}
                 price={item.price} 
-                save={item.save} 
-                url={item.url}
+                nu={item.nu}
+                oldPrice={item.oldPrice}
+                // save={item.save} 
+                image={item.image}
                 onPress={()=> navigation.navigate('ListingDetails',item)}
               />
             )}
@@ -113,6 +154,24 @@ function WishListScreen({navigation}) {
 }
 
 const styles = StyleSheet.create({
+  imgBackground: {
+    backgroundColor:Color.white,
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  logo: {
+    width: 150,
+    height: 180,
+  },
+  container: {
+    // flex: 1,
+    // paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    alignItems: "center",
+    position: "absolute",
+    top: 40,
+    justifyContent: "center",
+  },
   containerC:{
     backgroundColor: '#fff',
     flexDirection:'row',

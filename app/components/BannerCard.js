@@ -3,9 +3,9 @@ import { StyleSheet, View,Image} from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native';
 import AppText from './AppText';
 
-function BannerCard({images,title,...otherProps}) {
+function BannerCard({onPress,images,title,...otherProps}) {
   return (
-   <TouchableWithoutFeedback>
+   <TouchableWithoutFeedback onPress={onPress}>
         <View style={styles.container} {...otherProps}>
             <View style={styles.containerV} {...otherProps} >
                 <Image 

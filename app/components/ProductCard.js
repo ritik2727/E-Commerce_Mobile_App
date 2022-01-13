@@ -3,9 +3,9 @@ import { StyleSheet, View,Image} from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native';
 import AppText from './AppText';
 
-function ProductCard({images,title,}) {
+function ProductCard({images,title,onPress}) {
   return (
-   <TouchableWithoutFeedback>
+   <TouchableWithoutFeedback onPress={onPress}>
         <View style={styles.container} >
             <View style={styles.containerV} >
                 <Image 

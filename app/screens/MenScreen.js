@@ -77,19 +77,23 @@ function MenScreen({navigation}) {
        "https://images.bewakoof.com/uploads/grid/app/offers-banner-men-bb21-1640377277.jpg",
     ])
   return (
-    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
+    <ScrollView style={{backgroundColor:Color.white}} showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
+        <TouchableWithoutFeedback onPress={()=>navigation.navigate('MenLists')}>
         <Image 
             style={styles.banner1}
             source={{ uri: 'https://images.bewakoof.com/uploads/grid/app/ByeBye21Sale-Static-men-1640368543.jpg' }} 
         />
+        </TouchableWithoutFeedback>
+
         <Image 
             style={styles.banner2}
             source={require('../assets/banner2.jpeg')} 
         />
+     
   
          <SliderBox 
             images={images}
-            onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
+            onCurrentImagePressed={()=>navigation.navigate('MenLists')}
             sliderBoxHeight={400}
             dotColor="#FFEE58"
             inactiveDotColor="#90A4AE"
@@ -98,7 +102,7 @@ function MenScreen({navigation}) {
         />
         <ScrollView  showsHorizontalScrollIndicator={false} horizontal={true} style={styles.containerS}>  
         {bannerList.map((item,id) => (
-            <BannerCard   key={id} title={item.title} images={item.url} />
+            <BannerCard   key={id} title={item.title} images={item.url} onPress={()=>navigation.navigate('MenLists')} />
         ))}
         </ScrollView>
         <Image 
@@ -109,23 +113,6 @@ function MenScreen({navigation}) {
         style={styles.banner4}
         source={require('../assets/banner5.jpeg')} 
          />
-        {/* <View >
-            <FlatList style={{padding:10}}
-                data={ProductList}
-                numColumns={3} 
-                keyExtractor={(item, index) => `key-${index}` }
-                ListHeaderComponent={() => (
-                    <AppText style={{textAlign:'center',fontWeight:'bold'}}>New Arrivals For MEN</AppText>
-                  )}
-                renderItem={({item,index}) => (
-                    <ProductCard 
-                    key={index}
-                    title={item.title}
-                    images={item.url}
-                    />
-                )}
-            />
-        </View> */}
         <AppText style={{textAlign:'center',fontWeight:'bold'}}>New Arrivals For MEN</AppText>
         <View   style={styles.containerC}> 
         {ProductList.map((item,index) => (
@@ -133,6 +120,7 @@ function MenScreen({navigation}) {
             key={index}
             title={item.title}
             images={item.url}
+            onPress={()=>navigation.navigate('MenLists')}
             />
         ))}
         </View>
@@ -163,7 +151,8 @@ containerC:{
   banner1:{
     width: '100%',
     height: 400,
-    marginBottom:10
+    marginBottom:10,
+    marginTop:10
   },
   banner2:{
     

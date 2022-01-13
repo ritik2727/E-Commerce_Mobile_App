@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext  ,useState,useEffect} from "react";
 import {
   StyleSheet,
   View,
@@ -6,7 +6,7 @@ import {
   FlatList,
   Text,
   TouchableOpacity,
-  SafeAreaView,
+  Alert
 } from "react-native";
 import AppText from "../components/AppText";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -17,110 +17,138 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { StateContext } from "../context/StateContext";
 import { doc, deleteDoc } from "firebase/firestore";
 import { database } from "../../Firebase";
-import ContextLink from "../components/ContextLink";
+import CheckoutCard from "../components/CheckoutCard";
+import moment from 'moment';
+import {  setDoc,collection } from "firebase/firestore"; 
+import { CardField, useConfirmPayment } from "@stripe/stripe-react-native";
+import { StripeProvider } from "@stripe/stripe-react-native";
+import { useStripe } from "@stripe/stripe-react-native";
 
-const dataList = [
-  {
-    url: "https://images.bewakoof.com/t320/mickey-mouse-polaroids-440234-1637922200-1.jpg",
-    title: "Atlantic Deep Full Sleeve Henley T-shirt",
-    price: "₹499",
-    save: "₹499",
-    size: "M",
-  },
-  {
-    url: "https://images.bewakoof.com/t320/black-grey-mel-cut-n-sew-hoodie-sweatshirt-392785-1638435660-1.jpg",
-    title: "Atlantic Deep Full Sleeve Henley T-shirt",
-    price: "₹499",
-    save: "₹499",
-    size: "M",
-  },
-  {
-    url: "https://images.bewakoof.com/t320/black-grey-mel-cut-n-sew-hoodie-sweatshirt-392785-1638435660-1.jpg",
-    title: "Atlantic Deep Full Sleeve Henley T-shirt",
-    price: "₹499",
-    save: "₹499",
-    size: "M",
-  },
-  {
-    url: "https://images.bewakoof.com/t320/black-grey-mel-cut-n-sew-hoodie-sweatshirt-392785-1638435660-1.jpg",
-    title: "Atlantic Deep Full Sleeve Henley T-shirt",
-    price: "₹499",
-    save: "₹499",
-    size: "M",
-  },
-  {
-    url: "https://images.bewakoof.com/t320/black-grey-mel-cut-n-sew-hoodie-sweatshirt-392785-1638435660-1.jpg",
-    title: "Atlantic Deep Full Sleeve Henley T-shirt",
-    price: "₹499",
-    save: "₹499",
-    size: "M",
-  },
-  {
-    url: "https://images.bewakoof.com/t320/black-grey-mel-cut-n-sew-hoodie-sweatshirt-392785-1638435660-1.jpg",
-    title: "Atlantic Deep Full Sleeve Henley T-shirt",
-    price: "₹499",
-    save: "₹499",
-    size: "M",
-  },
-  {
-    url: "https://images.bewakoof.com/t320/black-grey-mel-cut-n-sew-hoodie-sweatshirt-392785-1638435660-1.jpg",
-    title: "Atlantic Deep Full Sleeve Henley T-shirt",
-    price: "₹499",
-    save: "₹499",
-    size: "M",
-  },
-];
-
-function CartScreen({ navigation }) {
-  const { cart, carttotal, userdata, oldPTotal, cartsave, addr } =
+function CheckOutScreen({ navigation }) {
+  const { cart, carttotal, userdata, oldPTotal, cartsave,addr } =
     useContext(StateContext);
+    const [add] =addr;
   const [dataCart, setDataCart] = cart;
   const [cartSave, setCartSave] = cartsave;
   const [cartTotal, setCartTotal] = carttotal;
   const [oldPriceCartTotal, setOldPriceCartTotal] = oldPTotal;
   const [user, setUser] = userdata;
-  const [add] = addr;
   const ide = user;
-  const deleteHandler = async (id) => {
-    const docRef = doc(database, "users", `${ide}`, "cart", id);
-    await deleteDoc(docRef);
-    then(() => {
-      ToastAndroid.show("Item Removed From Cart", ToastAndroid.SHORT);
-    });
-  };
 
-  if (dataCart.length === 0) {
-    return (
-      <View style={styles.imgBackground}>
-        <SafeAreaView style={styles.container}>
-          <Image
-            source={require("./../assets/NottingInBag.png")}
-            style={styles.logo}
-          />
-          <AppText>Nothing in the bag</AppText>
-          <Button
-            color={Color.secondary}
-            mode="outlined"
-            style={{
-              borderWidth: 1,
-              borderColor: Color.secondary,
-              marginTop: 10,
-            }}
-            onPress={() => navigation.navigate("Home")}
-            backgroundColor={Color.black}
-          >
-            <AppText style={{ color: Color.secondary, fontSize: 16 }}>
-              Continue Shopping
-            </AppText>
-          </Button>
-          <ContextLink  navigation={navigation}/>
-        </SafeAreaView>
-      </View>
-    );
+  const { confirmPayment, loading } = useConfirmPayment();
+  const { initPaymentSheet, presentPaymentSheet } = useStripe()
+  const [clientSecret, setClientSecret] = useState()
+
+  
+  useEffect(() => {
+    initializePayment()
+  })
+  // const deleteHandler = async (id) => {
+  //   const docRef = doc(database, "users", `${ide}`, "cart", id);
+  //   await deleteDoc(docRef);
+  //   then(() => {
+  //     ToastAndroid.show("Item Removed From Cart", ToastAndroid.SHORT);
+  //   });
+  // };
+
+  const addtoOrder =  () => {
+    dataCart.map( async (item) => {
+      const docRef = doc(collection(database,"users",`${ide}`,"order"))
+     await setDoc(docRef,{
+        price: item.price,
+        productName: item.productName,
+        oldPrice: item.oldPrice,
+        image: item.image,
+        size:item.size,
+        nu:item.nu,
+        date:moment().valueOf().toString()
+      }).then(()=>{
+        console.log('sud')
+      }).catch((error)=>console.log("error"))
+    });
+  }
+
+  const deleteCart = () => {
+    dataCart.map(  async (item) => {
+      const docRef = doc(database,"users",`${ide}`,"cart",item.key);
+       await deleteDoc(docRef).then((res) => { console.log(res) })
+    })
+  }
+
+
+  const initializePayment = async () => {
+    try {
+      const response = await fetch("https://desolate-tor-81663.herokuapp.com/payment", {
+        method: 'POST',
+        headers: {
+          "Content-type": "application/json"
+        }
+        ,
+        body: JSON.stringify({
+          paymentMethod: "card",
+          currency: "inr",
+          amount: cartTotal * 100,
+          
+        })
+      })
+      const { client_secret } = await response.json();
+
+      setClientSecret(client_secret)
+      // console.log(clientSecret)
+      const { error } = await initPaymentSheet({
+        paymentIntentClientSecret: clientSecret,
+        merchantDisplayName: 'Bewakoof',
+      })
+      if (error) {
+        Alert.alert("ERROR CODE")
+      }
+    }
+    catch (error) {
+      console.log("something wriong")
+      console.log(error.message)
+    }
+  }
+
+
+  const openPaymentSheet = async () => {
+    try {
+      const { error } = await presentPaymentSheet({
+       
+        clientSecret: clientSecret
+        
+      })
+      if (error) {
+        Alert.alert(" x Payment Failed", "Your Payment Has been Failed", error.message)
+      
+      }
+      else {
+        // db.collection('users').doc(ide).collection('shipping').add(
+        //   {
+        //     pincode,
+        //     address,
+        //   }
+        // )
+        // setAddress();
+        // setPincode();
+        addtoOrder();
+        deleteCart();
+        navigation.navigate("OrderScreen");
+        Alert.alert("Successfull !!!!", " ✔  Your Order Has been Successfully Placed");
+        
+     
+      }
+    }
+    catch (error) {
+      console.log(error)
+
+    }
   }
   return (
+    <StripeProvider 
+    publishableKey="pk_test_51JOzfFSGs3WteDI290yrM0bhrCjRDXsZISCi8PVHG45isfw7CN09fsOooDB99yl042wgNGVE1G9p8a6sLo5MC1ZD00PovwK3x6">
+    
     <View style={{ flex: 1 }}>
-      <View
+      {/* <View
         style={{
           flexDirection: "row",
           backgroundColor: "#fff",
@@ -133,15 +161,44 @@ function CartScreen({ navigation }) {
         <View style={[styles.centerElement, { height: 50 }]}>
           <AppText style={{ fontSize: 18, fontWeight: "bold" }}>My Bag</AppText>
         </View>
-      </View>
+      </View> */}
       <FlatList
         showsVerticalScrollIndicator={false}
         data={dataCart}
         keyExtractor={(item, index) => `key-${index}`}
         ListFooterComponent={() => (
           <>
+            {/* shpping */}
             <View style={{ paddingHorizontal: 15 }}>
-              <AppText>Price Summary</AppText>
+              <AppText style={{fontWeight:'bold'}}>SHIPPING</AppText>
+            </View>
+            {add.map((d,index) =>
+            <View key={index} style={styles.containerE}>
+              <View style={styles.containerD}>
+                <View style={{ width: "100%" }}>
+                  <AppText>Name : {d.name}</AppText>
+                </View>
+              </View>
+              <View style={styles.containerD}>
+                <View style={{ width: "100%" }}>
+                  <AppText>Email : {d.email}</AppText>
+                </View>
+              </View>
+              <View style={styles.containerD}>
+                <View style={{ width: "80%" }}>
+                  <AppText>Phone no. : {d.phone}</AppText>
+                </View>
+              </View>
+              <View style={styles.containerD}>
+                <View style={{ width: "100%" }}>
+                  <AppText >Address : {d.address}, {d.city}, {d.pinCode}, {d.state}</AppText>
+                </View>
+              </View>
+            </View>
+             ) }
+             {/* price summary */}
+            <View style={{ paddingHorizontal: 15 ,marginTop:10 }}>
+              <AppText style={{fontWeight:'bold'}}>PRICE SUMMARY</AppText>
             </View>
             <View style={styles.containerE}>
               <View style={styles.containerD}>
@@ -199,17 +256,18 @@ function CartScreen({ navigation }) {
                 </View>
               </View>
             </View>
+          
           </>
         )}
         renderItem={({ item, index }) => (
-          <CartCard
+          <CheckoutCard
             size={item.size}
             id={item.key}
+            nu={item.nu}
             productName={item.productName}
             price={item.price}
             oldPrice={item.oldPrice}
             // save={item.save}
-            nu={item.nu}
             onPress={()=> navigation.navigate('ListingDetails',item)}
             image={item.image}
           />
@@ -225,40 +283,19 @@ function CartScreen({ navigation }) {
               color={Color.secondary}
               labelStyle={{ color: "white", fontSize: 18 }}
               mode="contained"
-              onPress={() => {
-                add.length === 0
-                  ? navigation.navigate("Address")
-                  : navigation.navigate("Checkout");
-              }}
+              onPress={() => { openPaymentSheet(); }}
             >
-              Checkout
+              Pay
             </Button>
           </View>
         </View>
       </View>
     </View>
+    </StripeProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  imgBackground: {
-    backgroundColor:Color.white,
-    flex: 1,
-    justifyContent: "flex-end",
-    alignItems: "center",
-  },
-  logo: {
-    width: 150,
-    height: 180,
-  },
-  container: {
-    // flex: 1,
-    // paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-    alignItems: "center",
-    position: "absolute",
-    top: 40,
-    justifyContent: "center",
-  },
   containerC: {
     backgroundColor: "#fff",
     flexDirection: "row",
@@ -284,4 +321,4 @@ const styles = StyleSheet.create({
   centerElement: { justifyContent: "center", alignItems: "center" },
 });
 
-export default CartScreen;
+export default CheckOutScreen;

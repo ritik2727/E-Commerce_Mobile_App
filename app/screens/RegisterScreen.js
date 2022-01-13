@@ -1,5 +1,13 @@
 import React from "react";
-import { StyleSheet, View ,alert } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  StatusBar,
+  ScrollView,
+} from "react-native";
 import Screen from "../components/Screen";
 import {
   AppForm,
@@ -8,7 +16,10 @@ import {
   ErrorMessage,
 } from "../components/forms";
 import * as Yup from "yup";
-import { auth ,database } from "../../Firebase";
+import { authentication, database } from "../../Firebase";
+import { createUserWithEmailAndPassword,updateProfile } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import Color from "../config/Color";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required().label("Name"),
@@ -17,81 +28,82 @@ const validationSchema = Yup.object().shape({
   confirmPassword: Yup.string().required().min(6).label("Confirm Password"),
 });
 
-function RegisterScreen({navigation}) {
-  const handleSubmit = async ({ email, password, name,confirmPassword }) => {
-    // e.preventDefault();
-    console.log(email, password, name,confirmPassword);
+function RegisterScreen({ navigation }) {
+  const handleSubmit = ({ email, password, name, confirmPassword }) => {
     if (password === confirmPassword) {
-      
-  auth.createUserWithEmailAndPassword(email, password)
-        .then((response) => {
-          const uid = response.user.uid;
-          const data = {
-            id: uid,
-            email,
-            name,
-          };
-          const usersRef = database.collection("users");
-          usersRef
-            .doc(uid)
-            .set(data)
-            // .then(() => {
-            //   // navigation.navigate("ShoppingAdda");
-            // })
-            .catch((error) => {
-              alert(error);
-            });
+      createUserWithEmailAndPassword(authentication, email, password)
+        .then(async (result) => {
+          console.log("fs", result);
+          // Signed in
+          await setDoc(doc(database, "users", authentication.currentUser.uid), {
+            displayName: name,
+            email
+          });
+          await updateProfile(result.user, {
+            displayName:name
+          })
+          // result.user.updateProfile({ displayName: name });
+          ToastAndroid.show("Logged In", ToastAndroid.SHORT);
+          // ...
+        })
+        .catch((error) => {
+          Alert.alert(error.message);
         });
     } else {
-      alert("Password must be same");
+      Alert.alert("Password And Confirm must be same");
     }
   };
   return (
     <Screen style={styles.container}>
-      <AppForm
-        initialValues={{
-          name: "",
-          email: "",
-          password: "",
-          confirmPassword: "",
-        }}
-        onSubmit={handleSubmit}
-        validationSchema={validationSchema}
+      <ScrollView
+        style={{ paddingTop: 10 }}
+        showsVerticalScrollIndicator={false}
       >
-        <AppFormField
-          autoCapitalize="none"
-          name="name"
-          autoCorrect={false}
-          placeholder="Name"
-          icon="account"
-          textContextType="name"
-        />
-        <AppFormField
-          autoCapitalize="none"
-          name="email"
-          autoCorrect={false}
-          placeholder="Email"
-          icon="email"
-          textContextType="email"
-        />
-        <AppFormField
-          autoCapitalize="none"
-          name="password"
-          secureTextEntry
-          icon="lock"
-          placeholder="Password"
-          textContextType="password"
-        />
-        <AppFormField
-          autoCapitalize="none"
-          name="confirmPassword"
-          secureTextEntry
-          icon="lock"
-          placeholder="Password"
-          textContextType="password"
-        />
-        <SubmitButton title="SignUp" />
-      </AppForm>
+        <AppForm
+          initialValues={{
+            name: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+          }}
+          onSubmit={handleSubmit}
+          validationSchema={validationSchema}
+        >
+          <AppFormField
+            autoCapitalize="none"
+            name="name"
+            autoCorrect={false}
+            placeholder="Name"
+            icon="account"
+            textContextType="name"
+          />
+          <AppFormField
+            autoCapitalize="none"
+            name="email"
+            autoCorrect={false}
+            placeholder="Email"
+            icon="email"
+            textContextType="email"
+          />
+          <AppFormField
+            autoCapitalize="none"
+            name="password"
+            secureTextEntry
+            icon="lock"
+            placeholder="Password"
+            textContextType="password"
+          />
+          <AppFormField
+            autoCapitalize="none"
+            name="confirmPassword"
+            secureTextEntry
+            icon="lock"
+            placeholder="Confirm Password"
+            textContextType="password"
+          />
+          <SubmitButton title="SignUp" />
+        </AppForm>
+      </ScrollView>
     </Screen>
   );
 }
@@ -99,6 +111,9 @@ function RegisterScreen({navigation}) {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
+    paddingTop: 0,
+    // paddingTop:Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    backgroundColor: Color.white,
   },
 });
 

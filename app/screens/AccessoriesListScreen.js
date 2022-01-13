@@ -78,8 +78,9 @@ function AccessoriesListScreen({navigation}) {
                 key={index}
                 price={item.price}
                 oldPrice={item.oldPrice}
-                title={item.productName}
-                images={item.image}
+                productName={item.productName}
+                image={item.image}
+                nu={item.nu}
                 onPress={()=> navigation.navigate('ListingDetails',item)}
                 />
             )}
